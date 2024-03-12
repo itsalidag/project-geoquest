@@ -1,2 +1,10 @@
 config.yml
 data-service/venv
+data-service/f/hexmapper_outputs
+data-service/f/cache
+data-service/f/__pycache__
+cache/
+.DS_Store
+data-service/f/data_functions/
+.env
+node_modules/

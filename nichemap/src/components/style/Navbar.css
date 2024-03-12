@@ -1,0 +1,32 @@
+/* Navbar.css */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    background-color: #040453; /* Adjust the background color as needed */
+    color: white; /* Adjust the text color as needed */
+  }
+  
+  .logo {
+    font-size: 1.5em;
+    /* Add any additional styling for the logo */
+  }
+  
+  .right-sections { 
+    display: flex;
+  }
+  
+  .nav-item {
+    margin-left: 20px; /* Adjust the spacing between items */
+    cursor: pointer;
+    color:rgb(253, 255, 254)
+    /* Add any additional styling for the navigation items */
+  }
+  .logo img {
+    height: 50px;
+    padding-bottom: 0%;
+    padding-top: 0%;
+    margin: 0% 0% 0% 0%;
+    max-width: 100%;}

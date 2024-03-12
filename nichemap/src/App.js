@@ -1,49 +1,48 @@
 import React, { useState } from 'react';
 import './App.css';
-import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from 'react-leaflet';
-import { useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import poly from './polygon.json';
+import Navbar from './components/Navbar'
+import LeftPanel from './components/LeftPanel';
+import LeafMap from './components/LeafMap'
+import { Resizable } from 'react-resizable';
 
 function App() {
-  const [markers, setMarkers] = useState([]);
-
-  const setColor = ({ properties }) => {
-    return { weight: 1 };
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    height: '100vh', // Adjust this as needed
   };
 
-  const AddMarkerToClick = () => {
-    const map = useMapEvents({
-      click: (e) => {
-        const newMarker = {
-          id: markers.length + 1,
-          latlng: [e.latlng.lat, e.latlng.lng],
-        };
+  const leftPanelStyle = {
+    flex: '1',
+    width: '10%',
+    backgroundColor: '#f0f0f0', // Adjust background color as needed
+  };
 
-        setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
-      },
-    });
-
-    return null;
+  const mapStyle = {
+    flex: '4',
+    width: '90%',
+    backgroundColor: '#ffffff', // Adjust background color as needed
   };
 
   return (
-    <MapContainer center={[41.017860343158034, 28.997707316618385]} zoom={13}>
-      <TileLayer
-        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      <GeoJSON data={poly} style={setColor} />
-      <AddMarkerToClick />
-
-      {markers.map((marker) => (
-        <Marker key={marker.id} position={marker.latlng}>
-          <Popup>
-            Marker {marker.id} <br /> Location: {marker.latlng[0]}, {marker.latlng[1]}
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+    <>
+    <Navbar />
+    <div style={containerStyle}>
+      <Resizable
+        defaultSize={{ width: '33%', height: '100%' }}
+        minWidth={100}
+        maxWidth={'66%'}
+      >
+      <div style={leftPanelStyle}>
+      <LeftPanel />
+      </div>
+      </Resizable>
+      <div style={mapStyle}>
+      <LeafMap/>
+      </div>
+    
+    </div>
+    </>
   );
 }
 

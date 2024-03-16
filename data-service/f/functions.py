@@ -33,7 +33,7 @@ def score_osm_functions(CITY,FUNC):
     """
     all_scores = pd.DataFrame(columns=['perent_h3_index','key','score'])
     for urban_func in FUNC:
-        filepath = f'data-service/f/data_functions/{CITY}_{urban_func}.geojson'
+        filepath = f'data_functions/{CITY}_{urban_func}.geojson'
         if os.path.exists(filepath):
             osm_points = gpd.read_file(filepath)
             print('reading file from local...')
@@ -76,6 +76,3 @@ def get_rent_availability():
 
 def hexagon_scoring():
     return
-
-result = score_osm_functions('Mardin',['shopping','open_spaces'])
-print(result)

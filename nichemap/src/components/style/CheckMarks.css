@@ -1,0 +1,16 @@
+
+.iconButton{
+    padding: 30px;
+    margin: 10px;
+}
+
+.buttons-container{
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: rgb(0, 0, 0);
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+

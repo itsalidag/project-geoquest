@@ -1,18 +1,29 @@
 /* LeftPanel.css */
 
 .left-panel {
-    /* Optional: Add a border to separate panels */
-    padding-left: 10px;
-  }
-  
-  .calculate-button {
-    background-color: green; /* Adjust the button color as needed */
-    color: white;
-    padding: 10px;
-    cursor: pointer;
-    border: none;
-    margin-top: 10px;
-  }
-  
-  /* Add any additional styling as needed */
-  
+  /* Optional: Add a border to separate panels */
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: rgb(0, 0, 0);
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 90vh;
+}
+
+
+.calculate-button{
+  background-color: #040453;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 5px 10px 5px 10px;
+  width: 50%;
+  margin-bottom: 20%;
+
+}
+
+.calculate-button:hover{
+  background-color: #131378;
+}

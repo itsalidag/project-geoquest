@@ -15,7 +15,8 @@ function App() {
   const leftPanelStyle = {
     flex: '1',
     width: '10%',
-    backgroundColor: '#f0f0f0', // Adjust background color as needed
+    backgroundColor: '#f0f0f0',
+    height: '90vh' // Adjust background color as needed
   };
 
   const mapStyle = {
@@ -28,18 +29,12 @@ function App() {
     <>
     <Navbar />
     <div style={containerStyle}>
-      <Resizable
-        defaultSize={{ width: '33%', height: '100%' }}
-        minWidth={100}
-        maxWidth={'66%'}
-      >
-      <div style={leftPanelStyle}>
+    <div style={leftPanelStyle}>
       <LeftPanel />
-      </div>
-      </Resizable>
-      <div style={mapStyle}>
+    </div>
+    <div style={mapStyle}>
       <LeafMap/>
-      </div>
+    </div>
     
     </div>
     </>

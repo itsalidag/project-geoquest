@@ -4,6 +4,7 @@ import h3
 import geopandas as gpd
 from shapely.geometry import shape
 import json
+import functions as func
 
 app = Flask(__name__)
 city_data = gpd.read_file('/Users/ali.dag/ali-projects/tarsmart/find_home/gadm36_TUR_gpkg/gadm36_TUR.gpkg')
@@ -28,6 +29,12 @@ def hexmapper():
 
     except Exception as e:
         return jsonify({'message': 'Error', 'error': str(e)}), 500
+
+@app.route('/score_hexagons', methods=['POST'])
+def score_hexagons():
+    data = request.get_json()
+    func_data = func.score_osm_functions(CITY=data['city'],FUNC=data['function'])
+    return jsonify(func_data.to_json())
 
 # Run the app
 if __name__ == '__main__':

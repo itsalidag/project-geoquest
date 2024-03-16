@@ -1,6 +1,6 @@
 /* Map Styling */
 .leaflet-container{
-    height: 100vh;
+    height: 90%;
     flex: 1;
     width: 100wh;
   }

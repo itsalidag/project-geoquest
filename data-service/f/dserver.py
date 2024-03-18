@@ -5,8 +5,10 @@ import geopandas as gpd
 from shapely.geometry import shape
 import json
 import functions as func
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 city_data = gpd.read_file('/Users/ali.dag/ali-projects/tarsmart/find_home/gadm36_TUR_gpkg/gadm36_TUR.gpkg')
 
 # Define a sample endpoint
@@ -34,7 +36,7 @@ def hexmapper():
 def score_hexagons():
     data = request.get_json()
     func_data = func.score_osm_functions(CITY=data['city'],FUNC=data['function'])
-    return jsonify(func_data.to_json())
+    return func_data
 
 # Run the app
 if __name__ == '__main__':

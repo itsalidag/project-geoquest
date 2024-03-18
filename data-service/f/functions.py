@@ -8,6 +8,7 @@ from shapely.geometry import Polygon,MultiPolygon,LineString,Point
 import os
 import osmnx as ox
 from constants import INDEX_H3, PERENT_INDEX, OSM_TAGS, SAMPLE_JSON
+import matplotlib.pyplot as plt
 
 
 TEST = True
@@ -23,7 +24,10 @@ def get_polygon_hexagons(polygon)->list:
     """
     Return List of Hexagons within given polygon border
     """
-    return polygon.h3.polyfill_resample(9).reset_index().to_list()
+    hexagons = polygon.h3.polyfill_resample(9).reset_index()
+    hexagons['perent_h3_index'] = hexagons['h3_polyfill'].apply(lambda x: h3.h3_to_parent(x,PERENT_INDEX))
+
+    return hexagons
 
 def score_osm_functions(CITY,FUNC):
     """
@@ -31,12 +35,14 @@ def score_osm_functions(CITY,FUNC):
     add h3 indexes 
     aggregate to h3 and return df
     """
+    city_polygon = get_city_polygon(CITY)
+    hexagons = get_polygon_hexagons(city_polygon)
     all_scores = pd.DataFrame(columns=['perent_h3_index','key','score'])
     for urban_func in FUNC:
         filepath = f'data_functions/{CITY}_{urban_func}.geojson'
         if os.path.exists(filepath):
             osm_points = gpd.read_file(filepath)
-            print('reading file from local...')
+            print('reading file from local... City is',CITY)
         else:
             tags = OSM_TAGS[urban_func]
             osm_points = ox.geometries_from_place(CITY, tags[0])
@@ -51,9 +57,21 @@ def score_osm_functions(CITY,FUNC):
         function_score = pd.DataFrame(osm_points.groupby('perent_h3_index').count()['h3_index']).reset_index()
         function_score['key'] = urban_func
         function_score.columns = ['perent_h3_index','score','key']
-        all_scores = pd.concat([all_scores,function_score])
+        hexagons = hexagons.merge(function_score,on='perent_h3_index',how='left')
+        hexagons = hexagons[hexagons.score.notnull()]
 
-    return all_scores # TODO make this json
+        def assign_color(score):
+            # Adjust this colormap according to your preference
+            colormap = plt.cm.get_cmap('plasma').reversed()
+            normalized_score = (score - hexagons['score'].min()) / (hexagons['score'].max() - hexagons['score'].min())
+            color = colormap(normalized_score)
+            # Convert RGBA color to hexadecimal
+            hex_color = '#%02x%02x%02x' % tuple(int(255 * i) for i in color[:3])
+            return hex_color
+        hexagons['color_code'] = hexagons['score'].apply(assign_color)
+        hexagons = hexagons[['h3_polyfill','perent_h3_index','score','key','color_code','geometry']]
+
+    return hexagons.to_json() # TODO make this json
 
 
 
@@ -76,3 +94,5 @@ def get_rent_availability():
 
 def hexagon_scoring():
     return
+
+score_osm_functions('Mardin',['shopping'])

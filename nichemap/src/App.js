@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Navbar from './components/Navbar'
 import LeftPanel from './components/LeftPanel';
@@ -24,16 +24,24 @@ function App() {
     width: '90%',
     backgroundColor: '#ffffff', // Adjust background color as needed
   };
+  const [selectedData, setSelectedData] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false); // Shared state
+
+  const handleCalculate = (data) => {
+    setSelectedData(data.city);
+    console.log(data.city);
+    setIsSubmitted(!isSubmitted); 
+  };
 
   return (
     <>
     <Navbar />
     <div style={containerStyle}>
     <div style={leftPanelStyle}>
-      <LeftPanel />
+      <LeftPanel onCalculate={handleCalculate} isSubmitted={isSubmitted} />
     </div>
     <div style={mapStyle}>
-      <LeafMap/>
+      <LeafMap selectedCity={selectedData} isSubmitted={isSubmitted} key={selectedData}/>
     </div>
     
     </div>

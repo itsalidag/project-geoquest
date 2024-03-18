@@ -2,64 +2,73 @@ import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './style/LeafMap.css'; // Create a separate CSS file for styling if needed
 import poly from '../hexagons.json';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMapEvents } from 'react-leaflet';
 import './style/LeafMap.css';
 import L from 'leaflet'; // Import Leaflet library
 import iconUrl from "../pin.png";
 
-const LeafMap = () => {
+const LeafMap = ({ selectedCity, isSubmitted }) => {
     const [markers, setMarkers] = useState([]);
-
     const setColor = (feature) => {
-      const shoppingScore = feature.properties.shopping_score;
-      let color;
-      // Define your color scale or logic here based on shopping_score value
-      if (shoppingScore >= 0 && shoppingScore < 20) {
-          color = '#f48c06'; // Red for low scores
-      } else if (shoppingScore >= 20 && shoppingScore < 40) {
-          color = '#dc2f02'; // Orange for moderate scores
-      } else if (shoppingScore >= 40 && shoppingScore < 60) {
-          color = '#9d0208'; // Yellow for medium scores
-      } else if (shoppingScore >= 60 && shoppingScore < 80) {
-          color = '#6a040f'; // Green for high scores
-      } else {
-          color = '#370617'; // Bright green for very high scores
-      }
-      return { color: color, weight: 1 };
+      const shoppingScore = feature.properties.color_code;
+      
+      return { color: shoppingScore, weight: 0.2 };
   };
 
-    const AddMarkerToClick = () => {
-        const map = useMapEvents({
-          click: (e) => {
-            const newMarker = {
-              id: markers.length + 1,
-              latlng: [e.latlng.lat, e.latlng.lng],
-            };
-    
-            setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
-          },
-        });
-    
-        return null;
-      };
+  const AddMarkerToClick = () => {
+      const map = useMapEvents({
+        click: (e) => {
+          const newMarker = {
+            id: markers.length + 1,
+            latlng: [e.latlng.lat, e.latlng.lng],
+          };
+  
+          setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+        },
+      });
+  
+      return null;
+    };
   
     // Define custom icon
-    const customIcon = L.icon({
-        iconUrl: iconUrl, // Path to your custom icon
-        iconSize: [32, 32], // Size of the icon
-        iconAnchor: [16, 32], // Anchor point of the icon
-        popupAnchor: [0, -32] // Popup anchor point relative to the icon
-    });
+  const customIcon = L.icon({
+      iconUrl: iconUrl, // Path to your custom icon
+      iconSize: [32, 32], // Size of the icon
+      iconAnchor: [16, 32], // Anchor point of the icon
+      popupAnchor: [0, -32] // Popup anchor point relative to the icon
+  });
 
+  const [geojsonData, setGeojsonData] = useState(null);
+
+  const fetchGeoJSON = async () => {
+        try {
+          console.log(selectedCity)
+          const body = JSON.stringify({ city: selectedCity, function: ["shopping"] }); // Replace with your desired city and function
+          const response = await fetch('http://127.0.0.1:5000/score_hexagons', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+          });
+          const data = await response.json();
+          setGeojsonData(data);
+        } catch (error) {
+          console.error('Error fetching GeoJSON:', error);
+        }
+      };
+  useEffect(() => {
+      if (isSubmitted) {
+        fetchGeoJSON(selectedCity);
+      }
+  }, [selectedCity, isSubmitted]);
   return (
     <>
-    <MapContainer center={[41.017860343158034, 28.997707316618385]} zoom={11}>
+    <MapContainer center={[39.38864867568084, 35.150886488581726]} zoom={6}>
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <GeoJSON data={poly} style={setColor} />
+      {geojsonData && <GeoJSON data={geojsonData} key={selectedCity} style={setColor}/>}
       <AddMarkerToClick />
 
                 {markers.map((marker) => (

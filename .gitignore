@@ -8,3 +8,4 @@ cache/
 data-service/f/data_functions/
 .env
 node_modules/
+.vscode/
